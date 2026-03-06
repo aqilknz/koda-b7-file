@@ -6,14 +6,23 @@ import { stdin as input, stdout as output } from "node:process";
 const rl = readline.createInterface({ input, output });
 const folder = "newFile";
 
+async function direktori() {
+    try {
+        await fs.mkdir(folder, { recursive: true });
+    } catch (err) {
+        console.log("Gagal menyiapkan folder:", err.message);
+    }
+}
+
 // menampilkan daftar file
 async function listFile() {
     try {
+        await direktori()
         const files = await fs.readdir(folder);
 
         console.log("Daftar file:");
         if (files.length === 0) {
-        console.log("(folder kosong)");
+        console.log("(folder kosong)")
         } else {
         files.forEach((file, i) => {
             console.log(`${i + 1}. ${file}`);
@@ -29,6 +38,7 @@ async function listFile() {
 
 // tambah file
 async function addNewFile() {
+    await direktori()
     const nama = await rl.question("Nama file: ");
     const isi = await rl.question("Isi file: ");
 
@@ -36,21 +46,22 @@ async function addNewFile() {
 
     try {
         await fs.writeFile(filePath, isi, "utf-8");
-        console.log("File berhasil dibuat");
+        console.log("File berhasil dibuat")
     } catch {
-        console.log("Gagal membuat file");
+        console.log("Gagal membuat file")
     }
 }
 
 // edit file 
 async function editFile() {
+    await direktori()
     const files = await listFile();
     if (files.length === 0) return;
 
     const nomor = await rl.question("Masukkan nomor file yang ingin diedit: ");
     const index = parseInt(nomor) - 1;
     if (index < 0 || index >= files.length) {
-        console.log("Nomor tidak valid");
+        console.log("Nomor tidak valid")
         return;
     }
     const filePath = path.join(folder, files[index]);
@@ -63,7 +74,7 @@ async function editFile() {
         const newValue = await rl.question("Isi baru: \n");
 
         await fs.writeFile(filePath, newValue, "utf-8");
-        console.log("File berhasil diperbarui");
+        console.log("File berhasil diperbarui")
     } catch {
         console.log("File tidak bisa dibuka");
     }
@@ -71,6 +82,7 @@ async function editFile() {
 
 // baca file
 async function viewFile() {
+    await direktori()
     const files = await listFile();
     if (files.length === 0) return;
 
@@ -78,7 +90,7 @@ async function viewFile() {
     const index = parseInt(num) - 1;
 
     if (index < 0 || index >= files.length) {
-        console.log("Nomor tidak valid");
+        console.log("Nomor tidak valid")
         return;
     }
 
@@ -87,7 +99,7 @@ async function viewFile() {
     try {
         const data = await fs.readFile(filePath, "utf-8");
         console.log("\nIsi file:");
-        console.log(data);
+        console.log(data)
     } catch {
         console.log("File tidak ditemukan");
     }
@@ -95,6 +107,7 @@ async function viewFile() {
 
 // hapus file
 async function delFile() {
+    await direktori()
     const files = await listFile();
     if (files.length === 0) return;
 
@@ -102,7 +115,7 @@ async function delFile() {
     const index = parseInt(num) - 1;
 
     if (index < 0 || index >= files.length) {
-        console.log("Nomor tidak valid");
+        console.log("Nomor tidak valid")
         return;
     }
     const filePath = path.join(folder, files[index]);
@@ -118,6 +131,7 @@ async function delFile() {
 
 // main menu
 async function main() {
+    await direktori()
     let running = true;
 
     while (running) {
